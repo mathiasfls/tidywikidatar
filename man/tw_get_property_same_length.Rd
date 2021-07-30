@@ -46,10 +46,6 @@ Get Wikidata property of an item as a character vector of the same length as inp
 }
 \examples{
 
-tw_enable_cache()
-tw_set_cache_folder(path = tempdir())
-tw_set_language(language = "en")
-tw_create_cache_folder(ask = FALSE)
 
 # By default, it returns a list of the same length as input,
 # no matter how many values for each id/property
@@ -62,36 +58,39 @@ tw_get_property_same_length(
   p = "P26"
 )
 
-# Notice that if no relevant match is found, it returns a NA
-# This is useful for piped operations
+if (interactive()) {
 
-tibble::tibble(id = c(
-  "Q180099",
-  "Q228822",
-  "Q76857"
-)) \%>\%
-  dplyr::mutate(spouse = tw_get_property_same_length(id, "P26"))
+  # Notice that if no relevant match is found, it returns a NA
+  # This is useful for piped operations
 
-# Consider unnesting for further analysis
+  tibble::tibble(id = c(
+    "Q180099",
+    "Q228822",
+    "Q76857"
+  )) \%>\%
+    dplyr::mutate(spouse = tw_get_property_same_length(id, "P26"))
 
-# tibble::tibble(id = c(
-#   "Q180099",
-#   "Q228822",
-#   "Q76857"
-# )) \%>\%
-#   dplyr::mutate(spouse = tw_get_property_same_length(id, "P26")) \%>\%
-#   tidyr::unnest(cols = spouse)
+  # Consider unnesting for further analysis
 
-# If you are sure that you are interested only in the first return value,
-# consider setting only_first=TRUE to get a character vector rather than a list
-# Be mindful: you may well be discarding valid values.
+  tibble::tibble(id = c(
+    "Q180099",
+    "Q228822",
+    "Q76857"
+  )) \%>\%
+    dplyr::mutate(spouse = tw_get_property_same_length(id, "P26")) \%>\%
+    tidyr::unnest(cols = spouse)
 
-# tibble::tibble(id = c(
-#   "Q180099",
-#   "Q228822",
-#   "Q76857"
-# )) \%>\%
-#   dplyr::mutate(spouse = tw_get_property_same_length(id, "P26",
-#                                                      only_first = TRUE))
+  # If you are sure that you are interested only in the first return value,
+  # consider setting only_first=TRUE to get a character vector rather than a list
+  # Be mindful: you may well be discarding valid values.
 
+  tibble::tibble(id = c(
+    "Q180099",
+    "Q228822",
+    "Q76857"
+  )) \%>\%
+    dplyr::mutate(spouse = tw_get_property_same_length(id, "P26",
+      only_first = TRUE
+    ))
+}
 }

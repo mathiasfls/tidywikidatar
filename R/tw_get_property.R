@@ -90,10 +90,6 @@ tw_get_property <- function(id,
 #'
 #' @examples
 #'
-#' tw_enable_cache()
-#' tw_set_cache_folder(path = tempdir())
-#' tw_set_language(language = "en")
-#' tw_create_cache_folder(ask = FALSE)
 #'
 #' # By default, it returns a list of the same length as input,
 #' # no matter how many values for each id/property
@@ -106,38 +102,41 @@ tw_get_property <- function(id,
 #'   p = "P26"
 #' )
 #'
-#' # Notice that if no relevant match is found, it returns a NA
-#' # This is useful for piped operations
+#' if (interactive()) {
 #'
-#' tibble::tibble(id = c(
-#'   "Q180099",
-#'   "Q228822",
-#'   "Q76857"
-#' )) %>%
-#'   dplyr::mutate(spouse = tw_get_property_same_length(id, "P26"))
+#'   # Notice that if no relevant match is found, it returns a NA
+#'   # This is useful for piped operations
 #'
-#' # Consider unnesting for further analysis
+#'   tibble::tibble(id = c(
+#'     "Q180099",
+#'     "Q228822",
+#'     "Q76857"
+#'   )) %>%
+#'     dplyr::mutate(spouse = tw_get_property_same_length(id, "P26"))
 #'
-#' # tibble::tibble(id = c(
-#' #   "Q180099",
-#' #   "Q228822",
-#' #   "Q76857"
-#' # )) %>%
-#' #   dplyr::mutate(spouse = tw_get_property_same_length(id, "P26")) %>%
-#' #   tidyr::unnest(cols = spouse)
+#'   # Consider unnesting for further analysis
 #'
-#' # If you are sure that you are interested only in the first return value,
-#' # consider setting only_first=TRUE to get a character vector rather than a list
-#' # Be mindful: you may well be discarding valid values.
+#'   tibble::tibble(id = c(
+#'     "Q180099",
+#'     "Q228822",
+#'     "Q76857"
+#'   )) %>%
+#'     dplyr::mutate(spouse = tw_get_property_same_length(id, "P26")) %>%
+#'     tidyr::unnest(cols = spouse)
 #'
-#' # tibble::tibble(id = c(
-#' #   "Q180099",
-#' #   "Q228822",
-#' #   "Q76857"
-#' # )) %>%
-#' #   dplyr::mutate(spouse = tw_get_property_same_length(id, "P26",
-#' #                                                      only_first = TRUE))
+#'   # If you are sure that you are interested only in the first return value,
+#'   # consider setting only_first=TRUE to get a character vector rather than a list
+#'   # Be mindful: you may well be discarding valid values.
 #'
+#'   tibble::tibble(id = c(
+#'     "Q180099",
+#'     "Q228822",
+#'     "Q76857"
+#'   )) %>%
+#'     dplyr::mutate(spouse = tw_get_property_same_length(id, "P26",
+#'       only_first = TRUE
+#'     ))
+#' }
 tw_get_property_same_length <- function(id,
                                         p,
                                         only_first = FALSE,
@@ -165,11 +164,11 @@ tw_get_property_same_length <- function(id,
   )
 
   if (nrow(property_df) == 0) {
-    if (only_first==TRUE) {
+    if (only_first == TRUE) {
       return(rep(as.character(NA), length(id)))
     } else {
       return(rep(as.character(NA), length(id)) %>%
-               as.list())
+        as.list())
     }
   }
 
@@ -184,8 +183,10 @@ tw_get_property_same_length <- function(id,
   }
 
   property_df_out <- tibble::tibble(id = id) %>%
-    dplyr::left_join(y = property_df_post,
-                     by = "id")
+    dplyr::left_join(
+      y = property_df_post,
+      by = "id"
+    )
 
   if (class(property_df_out$value) == "list") {
     property_df_out$value[purrr::map_lgl(
